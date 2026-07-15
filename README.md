@@ -1,141 +1,129 @@
-# Focus Banner
+# DisturbMiNot 🎧
 
-A scrolling "do not disturb" marquee pinned to the top of your Mac's screen,
-just below the menu bar. It floats above all windows, appears on every Space
-and every connected display, and is click-through — it never steals your mouse
-or keyboard.
+**A scrolling status banner for the top of your Mac's screen — so your
+coworking space knows when to leave you alone, and when to come say hi.**
 
-## Install (for users)
+![The two banner modes](docs/preview.png)
 
-1. Download `FocusBanner-x.y.z.zip` from the
-   [Releases page](../../releases), unzip it, and drag `FocusBanner.app`
-   into `/Applications` (or anywhere you like).
-2. First launch: the app is not notarized, so macOS will block a plain
-   double-click. **Right-click the app → Open → Open** (needed only once).
-   Alternatively: `xattr -d com.apple.quarantine FocusBanner.app`
-3. The banner appears at the top of the screen, and a text-input icon shows
-   up in the menu bar — use it to customize everything.
+DisturbMiNot pins a marquee above all your windows, on every Space and every
+display. It's completely click-through — it never steals your mouse or
+keyboard — and it's controlled from a tiny menu bar icon. One keystroke flips
+you between *"do not disturb"* and *"interruptions welcome."*
 
-Requires macOS 13 or later.
+- 🖥 **Native & tiny** — one Swift file, zero dependencies, ~250 KB app
+- 🚦 **Two modes** — Focus and Available, each with its own message and colors
+- 🎨 **Fully customizable** — font, size, colors (with transparency), height,
+  speed, display — all live from one Settings window
+- ✨ **Optional eye candy** — neon glow and CRT scanlines
+- 📌 **Territorial mode** — optionally pushes other windows down so nothing
+  ever covers the banner
+- 💾 **Remembers everything** — settings persist across launches
+
+## Install
+
+1. Grab `FocusBanner-x.y.z.zip` from the [Releases page](../../releases)
+   and unzip it.
+2. Drag `FocusBanner.app` to `/Applications` (or anywhere).
+3. **First launch only:** the app isn't notarized, so right-click it →
+   **Open** → **Open**. (Or clear the quarantine flag:
+   `xattr -d com.apple.quarantine FocusBanner.app`)
+
+The banner appears immediately and a text-cursor icon shows up in your menu
+bar. Requires macOS 13+.
+
+## Using it
+
+Click the menu bar icon:
+
+| Menu item | What it does |
+|---|---|
+| **Focus — Do Not Disturb** (⌘1) | Switch to the "leave me alone" banner |
+| **Available — Interruptions Welcome** (⌘2) | Switch to the "come say hi" banner |
+| **Settings…** (⌘,) | Open the settings window |
+| **Pause Scrolling** (⌘P) | Freeze / unfreeze the marquee |
+| **Quit** (⌘Q) | Remove the banner and the icon |
+
+### Settings window
+
+Everything lives in one window, every change applies **live** and is saved
+instantly:
+
+| Setting | Range |
+|---|---|
+| Message | Per mode — the banner updates as you type |
+| Colors | Per mode — text & background wells, alpha supported |
+| Font | Any installed font, via the macOS font panel |
+| Font size | 10–48 pt slider |
+| Bar height | 20–80 px slider (auto-grows if the font needs it) |
+| Scroll speed | 30–300 px/s slider |
+| Screen | All displays, or a single one by name |
+| Glow | Neon halo around the text, tinted to the text color |
+| CRT effect | Steady horizontal scanlines (no flicker) |
+| Keep windows below | Nudges overlapping windows down below the banner |
+
+> **Note on "Keep windows below":** macOS has no public API for reserving
+> screen space, so this works through the Accessibility API — the first time
+> you enable it, macOS asks you to allow the app under
+> *System Settings → Privacy & Security → Accessibility*. Windows overlapping
+> the banner are moved down every half second; full-screen apps are left
+> alone.
+
+### Settings file
+
+Everything is stored in `~/.config/focusbanner.json`. Delete it to reset to
+factory defaults. Command-line flags (below) override saved values at launch.
 
 ## Build from source
 
+The only requirement is the Xcode Command Line Tools
+(`xcode-select --install`):
+
 ```sh
-./build.sh        # produces FocusBanner.app
+git clone https://github.com/GuillaumePoly/disturbminot.git
+cd disturbminot
+./build.sh          # compiles banner.swift → FocusBanner.app
 open FocusBanner.app
 ```
 
-The only requirement is the Xcode Command Line Tools (`xcode-select --install`).
-`make-icon.swift` regenerates `AppIcon.icns` if you want a different icon.
+Other tooling:
 
-## Run from the terminal (optional)
+- `make-icon.swift` — regenerates `AppIcon.icns`
+- `make-preview.swift` — regenerates the README image (`docs/preview.png`)
 
-The raw binary inside the bundle accepts a message and flags:
+## Command line (optional)
 
-```sh
-FocusBanner.app/Contents/MacOS/focusbanner "🎧 Deep work — please don't interrupt" &
-```
-
-## Modes
-
-The banner has two modes, switchable from the menu bar icon (or ⌘1 / ⌘2
-while the menu is open):
-
-- **Focus — Do Not Disturb** — the classic "headphones on" banner
-- **Available — Interruptions Welcome** — a friendly green banner telling
-  people it's fine to come talk to you
-
-Each mode has its own message and its own text/background colors, so the
-banner reads differently at a glance from across the room.
-
-## Menu bar item
-
-While the banner is running, a text-input icon (a small box with a text
-cursor) appears in the menu bar. Click it for:
-
-- The two **mode** entries (checkmark shows the active one)
-- **Settings…** — opens the settings window (see below)
-- **Pause Scrolling** / **Resume Scrolling** — freeze the marquee in place
-- **Quit Focus Banner** — remove the banner and the menu bar icon
-
-## Settings window
-
-Everything is customized in one place (menu bar icon → **Settings…**).
-All changes apply live and are saved immediately:
-
-- **Current mode** — same switch as the menu
-- **Focus / Available message** — the banner updates as you type
-- **Focus / Available colors** — text and background color wells (alpha
-  supported, so the background can be more or less translucent)
-- **Font** — opens the macOS font panel (any family, style, size); the bar
-  grows automatically if the font gets too tall for it
-- **Font size** — slider from 10 pt to 48 pt
-- **Bar height** — slider from 20 px to 80 px
-- **Scroll speed** — slider from 30 px/s to 300 px/s
-- **Screen** — all displays (default) or a single one by name; the banner
-  also repositions automatically when displays are plugged in or removed
-- **Glow** — neon halo around the text, tinted to match the text color
-- **CRT effect** — horizontal scanlines over the banner (no flicker)
-- **Keep other windows below the banner** — pushes any window overlapping
-  the banner down below it (checked every half second). Requires the
-  Accessibility permission: the first time you enable it, macOS shows a
-  dialog pointing to System Settings → Privacy & Security → Accessibility.
-  Full-screen apps are left alone. Note: because the binary is re-signed on
-  every rebuild, you may need to re-grant (or toggle off/on) the permission
-  after recompiling.
-
-## Settings persistence
-
-Every change made in the settings window (and the mode switch) is saved
-immediately to `~/.config/focusbanner.json` and restored automatically on
-the next launch. Configs from older single-mode versions are migrated into
-the Focus mode automatically.
-
-Precedence at startup: built-in defaults < saved settings < command-line
-flags. Flags affect the Focus mode (the positional message argument sets the
-Focus message). Delete the JSON file to reset to factory defaults.
-
-The screen choice is saved by display name (e.g. "DELL U2723QE"); if that
-display isn't connected at launch, the banner shows on all displays until
-it reappears.
-
-## Stop
-
-Use **Quit Focus Banner** in the menu bar item, or:
+The binary inside the bundle accepts a Focus-mode message and startup flags:
 
 ```sh
-pkill focusbanner
+FocusBanner.app/Contents/MacOS/focusbanner "In a call until 3pm" \
+    --height 40 --font-size 20 --bg FFFFFF --fg CC0000 --speed 60
 ```
 
-(or Ctrl+C in the terminal that launched it)
+| Flag | Default | Meaning |
+|---|---|---|
+| `--speed` | `100` | Scroll speed in px/second |
+| `--height` | `30` | Bar height in px |
+| `--font-size` | `16` | Text size in points |
+| `--bg` | `1E1E2E` | Focus background color (hex) |
+| `--fg` | `FFD866` | Focus text color (hex) |
 
-## Options
+Precedence: built-in defaults < saved settings < command-line flags.
 
-| Flag          | Default  | Meaning                    |
-|---------------|----------|----------------------------|
-| `--speed`     | `100`    | Scroll speed in px/second  |
-| `--height`    | `30`     | Bar height in px           |
-| `--font-size` | `16`     | Text size in points        |
-| `--bg`        | `1E1E2E` | Background color (hex)     |
-| `--fg`        | `FFD866` | Text color (hex)           |
+## How it works
 
-Example — a taller red-on-white banner that scrolls slowly:
-
-```sh
-./focusbanner "In a call until 3pm" --height 40 --font-size 20 --bg FFFFFF --fg CC0000 --speed 60
-```
-
-## Rebuild after editing banner.swift
-
-```sh
-./build.sh
-```
+The banner is a borderless `NSWindow` at `.statusBar` level with
+`ignoresMouseEvents`, placed just below the menu bar on each screen
+(`canJoinAllSpaces` + `fullScreenAuxiliary` make it follow you everywhere).
+The marquee is two wide labels leapfrogging each other at 60 fps. "Keep
+windows below" combines `CGWindowList` (to find overlapping windows cheaply)
+with the `AXUIElement` API (to move them). Everything is in
+[banner.swift](banner.swift) — ~700 lines, no dependencies.
 
 ## Releasing a new version
 
-1. Bump `VERSION` in `build.sh`, run `./build.sh`.
-2. Zip the app: `ditto -c -k --keepParent FocusBanner.app FocusBanner-x.y.z.zip`
-3. Attach the zip to a GitHub release.
+1. Bump `VERSION` in `build.sh`, run `./build.sh`
+2. `ditto -c -k --keepParent FocusBanner.app FocusBanner-x.y.z.zip`
+3. Attach the zip to a GitHub release
 
-The app is ad-hoc signed (no Apple Developer account), so downloaders will
-see the Gatekeeper warning described in the install section.
+The app is ad-hoc signed (no Apple Developer account needed), so downloaders
+see the right-click-to-open dance described in the install section.

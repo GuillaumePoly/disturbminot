@@ -3,7 +3,7 @@
 **A scrolling status banner for the top of your Mac's screen — so your
 coworking space knows when to leave you alone, and when to come say hi.**
 
-![The two banner modes](docs/preview.png)
+![big image](docs/preview.png)
 
 DisturbMiNot pins a marquee above all your windows, on every Space and every
 display. It's completely click-through — it never steals your mouse or
